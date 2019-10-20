@@ -205,66 +205,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201907282249358_2.0.cs" />
-    <Compile Include="Migrations\201907282249358_2.0.Designer.cs">
-      <DependentUpon>201907282249358_2.0.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201907282256047_3.0.cs" />
-    <Compile Include="Migrations\201907282256047_3.0.Designer.cs">
-      <DependentUpon>201907282256047_3.0.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201907282324024_4.0.cs" />
-    <Compile Include="Migrations\201907282324024_4.0.Designer.cs">
-      <DependentUpon>201907282324024_4.0.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201907292305086_1.1.cs" />
-    <Compile Include="Migrations\201907292305086_1.1.Designer.cs">
-      <DependentUpon>201907292305086_1.1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201907292314504_1.2.cs" />
-    <Compile Include="Migrations\201907292314504_1.2.Designer.cs">
-      <DependentUpon>201907292314504_1.2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201907292333544_1.3.cs" />
-    <Compile Include="Migrations\201907292333544_1.3.Designer.cs">
-      <DependentUpon>201907292333544_1.3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201907300048331_1.6.cs" />
-    <Compile Include="Migrations\201907300048331_1.6.Designer.cs">
-      <DependentUpon>201907300048331_1.6.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201907302348466_1.7.cs" />
-    <Compile Include="Migrations\201907302348466_1.7.Designer.cs">
-      <DependentUpon>201907302348466_1.7.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201908041850445_1.8.cs" />
-    <Compile Include="Migrations\201908041850445_1.8.Designer.cs">
-      <DependentUpon>201908041850445_1.8.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201908291249419_1.9.cs" />
-    <Compile Include="Migrations\201908291249419_1.9.Designer.cs">
-      <DependentUpon>201908291249419_1.9.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201908302311245_2.1.cs" />
-    <Compile Include="Migrations\201908302311245_2.1.Designer.cs">
-      <DependentUpon>201908302311245_2.1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201908302322272_add criacao.cs" />
-    <Compile Include="Migrations\201908302322272_add criacao.Designer.cs">
-      <DependentUpon>201908302322272_add criacao.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201908302340032_d.cs" />
-    <Compile Include="Migrations\201908302340032_d.Designer.cs">
-      <DependentUpon>201908302340032_d.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201909181635045_gg4.cs" />
-    <Compile Include="Migrations\201909181635045_gg4.Designer.cs">
-      <DependentUpon>201909181635045_gg4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201910081833497_add.cs" />
-    <Compile Include="Migrations\201910081833497_add.Designer.cs">
-      <DependentUpon>201910081833497_add.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Autenticação\Cadastros\CadastroCliente.cs" />
     <Compile Include="Models\Autenticação\Cadastros\CadastroFornecedor.cs" />
@@ -453,53 +393,6 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201907282249358_2.0.resx">
-      <DependentUpon>201907282249358_2.0.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907282256047_3.0.resx">
-      <DependentUpon>201907282256047_3.0.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907282324024_4.0.resx">
-      <DependentUpon>201907282324024_4.0.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907292305086_1.1.resx">
-      <DependentUpon>201907292305086_1.1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907292314504_1.2.resx">
-      <DependentUpon>201907292314504_1.2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907292333544_1.3.resx">
-      <DependentUpon>201907292333544_1.3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907300048331_1.6.resx">
-      <DependentUpon>201907300048331_1.6.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201907302348466_1.7.resx">
-      <DependentUpon>201907302348466_1.7.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201908041850445_1.8.resx">
-      <DependentUpon>201908041850445_1.8.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201908291249419_1.9.resx">
-      <DependentUpon>201908291249419_1.9.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201908302311245_2.1.resx">
-      <DependentUpon>201908302311245_2.1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201908302322272_add criacao.resx">
-      <DependentUpon>201908302322272_add criacao.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201908302340032_d.resx">
-      <DependentUpon>201908302340032_d.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201909181635045_gg4.resx">
-      <DependentUpon>201909181635045_gg4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201910081833497_add.resx">
-      <DependentUpon>201910081833497_add.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
