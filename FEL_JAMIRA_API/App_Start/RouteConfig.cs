@@ -17,7 +17,7 @@ namespace FEL_JAMIRA_API
             routes.MapRoute(
                        name: "Default",
                        url: "{controller}/{action}/{id}",
-                       defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                       defaults: new { controller = "help", action = "Index", id = UrlParameter.Optional }
                    );
         }
     }

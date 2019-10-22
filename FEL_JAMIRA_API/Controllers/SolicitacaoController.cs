@@ -582,57 +582,79 @@ namespace FEL_JAMIRA_API.Controllers
             }
         }
 
-        /*
+        
         /// <summary>
-        /// Método para Buscar os Clientes do Estacionamento.
+        /// Método para cadastrar solicitação do fornecedor.
         /// </summary>
         /// <param name="entidade"></param>
         /// <returns></returns>
-        [System.Web.Http.HttpGet]
+        [System.Web.Http.HttpPost]
         [System.Web.Http.Authorize]
-        [System.Web.Http.Route("~/api/Solicitacao/GetSolicitacoesParaFinalizar")]
-        public async Task<ResponseViewModel<List<Solicitantes>>> GetSolicitacoesParaFinalizar(string idUsuario)
+        [System.Web.Http.Route("~/api/Solicitacao/CadastrarSolicitacao")]
+        public async Task<ResponseViewModel<Solicitacao>> CadastrarSolicitacao(Solicitacao solicitacao)
         {
             try
             {
-                int valor = int.Parse(idUsuario);
-
-
-                List<Solicitantes> solicitacao = await db.Solicitacoes.Include("Cliente").Include("Estacionamento").Include("Estacionamento.Proprietario")
-                                            .Where(x => x.Estacionamento.IdPessoa.Equals(valor) && x.Status.Equals(2))
-                                            .Select(cl => new Solicitantes
-                                            {
-                                                NomeCliente = cl.Cliente.Nome,
-                                                Carro = CarroCliente(cl.IdCliente),
-                                                IdCliente = cl.IdCliente,
-                                                IdSolicitacao = cl.Id,
-                                                Status = cl.Status,
-                                                PeriodoDe = null,
-                                                PeriodoAte = null
-                                            }).ToListAsync();
-
-                ResponseViewModel<List<Solicitantes>> response = new ResponseViewModel<List<Solicitantes>>
+                if (solicitacao.Status == 2)
                 {
-                    Data = solicitacao,
-                    Mensagem = "Dados retornados com sucesso!",
-                    Serializado = true,
-                    Sucesso = true
-                };
+                    List<Solicitacao> solicitacaos = db.Solicitacoes.Where(x => x.IdCliente == solicitacao.IdCliente && x.Status != 1 && x.Status != 4).ToList();
+                    if (solicitacaos.Count > 0)
+                    {
+                        ResponseViewModel<Solicitacao> response = new ResponseViewModel<Solicitacao>
+                        {
+                            Data = solicitacao,
+                            Mensagem = "O Cliente já se encontra em processo de avaliação.",
+                            Serializado = false,
+                            Sucesso = true
+                        };
+                        return response;
+                    }
+                    else
+                    {
+                        solicitacao.ValorGanho = 0;
+                        solicitacao.ValorTotal = 0;
+                        solicitacao.ValorTotalEstacionamento = 0;
 
-                return response;
+                        db.Set<Solicitacao>().Add(solicitacao);
+
+                        Task.Run(async () => {
+                            await db.SaveChangesAsync();
+                        }).Wait();
+
+                        ResponseViewModel<Solicitacao> response = new ResponseViewModel<Solicitacao>
+                        {
+                            Data = solicitacao,
+                            Mensagem = "Solicitação cadastrada com sucesso!",
+                            Serializado = true,
+                            Sucesso = true
+                        };
+                        return response;
+                    }
+                }
+                else
+                {
+                    ResponseViewModel<Solicitacao> response = new ResponseViewModel<Solicitacao>
+                    {
+                        Data = solicitacao,
+                        Mensagem = "Para Cadastrar a solicitação, é necessário que o status seja '2'!",
+                        Sucesso = false,
+                        Serializado = true
+                    };
+                    return response;
+                }
             }
             catch (Exception e)
             {
-                return new ResponseViewModel<List<Solicitantes>>()
+                return new ResponseViewModel<Solicitacao>()
                 {
                     Data = null,
-                    Serializado = true,
-                    Sucesso = false,
+                    Sucesso = true,
+                    Serializado = false,
                     Mensagem = "Não foi possivel atender a sua solicitação: " + e.Message
                 };
             }
         }
-        */
+        
         public Carro CarroCliente(int idCliente)
         {
             Carro carro = db.Carros.FirstOrDefault(x => x.IdCliente == idCliente);
