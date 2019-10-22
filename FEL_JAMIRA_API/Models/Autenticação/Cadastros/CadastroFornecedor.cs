@@ -18,6 +18,10 @@ namespace FEL_JAMIRA_API.Models.Cadastros
         public string Email { get; set; }
         public string Senha { get; set; }
         public string ConfirmaSenha { get; set; }
+        public string Agencia { get; set; }
+        public string Conta { get; set; }
+        public int IdBanco { get; set; }
+        public int IdTipoConta { get; set; }
         public string Rua { get; set; }
         public int Numero { get; set; }
         public string Bairro { get; set; }

@@ -209,6 +209,7 @@
     <Compile Include="Models\Autenticação\Cadastros\CadastroCliente.cs" />
     <Compile Include="Models\Autenticação\Cadastros\CadastroFornecedor.cs" />
     <Compile Include="Models\Autenticação\Requisição\LoginRequisicao.cs" />
+    <Compile Include="Models\Banco.cs" />
     <Compile Include="Models\Carro.cs" />
     <Compile Include="Models\CategoriaFaleConosco.cs" />
     <Compile Include="Models\Cidade.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="Models\Clientes\EstacionamentosDoCliente.cs" />
     <Compile Include="Models\Clientes\TransacoesDoCliente.cs" />
     <Compile Include="Models\CompraCreditos.cs" />
+    <Compile Include="Models\ContaDeposito.cs" />
     <Compile Include="Models\Context.cs" />
     <Compile Include="Models\Endereco.cs" />
     <Compile Include="Models\Enderecos\EnderecoEstacionamento.cs" />
@@ -231,6 +233,7 @@
     <Compile Include="Models\Marca.cs" />
     <Compile Include="Models\Pessoa.cs" />
     <Compile Include="Models\Solicitacao.cs" />
+    <Compile Include="Models\TipoConta.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

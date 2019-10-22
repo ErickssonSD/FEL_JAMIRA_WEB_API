@@ -76,9 +76,48 @@ namespace FEL_JAMIRA_API.Controllers
             }
         }
 
-        public DateTime ConvertDatetime (DateTime? datetime)
+        /// <summary>
+        /// Método para Buscar os Estacionamentos do Cliente.
+        /// </summary>
+        /// <param name="entidade"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Authorize]
+        [System.Web.Http.Route("~/api/Solicitacao/GetAllEstacionamentosDoCliente")]
+        public async Task<ResponseViewModel<List<EstacionamentosDoCliente>>> GetAllEstacionamentosDoCliente(string idCliente)
         {
-            return Convert.ToDateTime(datetime);
+            try
+            {
+                int valor = int.Parse(idCliente);
+                List<EstacionamentosDoCliente> solicitacao = await db.Solicitacoes.Include("Estacionamento")
+                                            .Where(x => x.IdCliente.Equals(valor))
+                                            .Select(cl => new EstacionamentosDoCliente
+                                            {
+                                                NomeEstacionamento = cl.Estacionamento.NomeEstacionamento,
+                                                PeriodoDe = cl.DataEntrada,
+                                                PeriodoAte = cl.DataSaida,
+                                                ValorTotal = cl.ValorTotal
+                                            }).ToListAsync();
+                ResponseViewModel<List<EstacionamentosDoCliente>> response = new ResponseViewModel<List<EstacionamentosDoCliente>>
+                {
+                    Data = solicitacao,
+                    Mensagem = "Dados retornados com sucesso!",
+                    Serializado = true,
+                    Sucesso = true
+                };
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new ResponseViewModel<List<EstacionamentosDoCliente>>()
+                {
+                    Data = null,
+                    Serializado = true,
+                    Sucesso = false,
+                    Mensagem = "Não foi possivel atender a sua solicitação: " + e.Message
+                };
+            }
         }
 
         /// <summary>
@@ -436,7 +475,8 @@ namespace FEL_JAMIRA_API.Controllers
         {
             try
             {
-                Solicitacao solicitacao = db.Solicitacoes.Include("Estacionamento").Include("Estacionamento.Proprietario").FirstOrDefault(x => x.Id == IdSolicitacao);
+                Solicitacao solicitacao = db.Solicitacoes.Include("Cliente").Include("Estacionamento").Include("Estacionamento.Proprietario").FirstOrDefault(x => x.Id == IdSolicitacao);
+                Cliente cliente = solicitacao.Cliente;
 
                 string tempo = "";
                 solicitacao.Status = 1;
@@ -445,9 +485,12 @@ namespace FEL_JAMIRA_API.Controllers
                 var minutosTotais = Convert.ToInt32((int)diferenca.TotalMinutes);
                 var valorMinuto = solicitacao.Estacionamento.ValorHora/60.0;
                 solicitacao.ValorTotal = valorMinuto * minutosTotais;
-                var aa = 5 / 60.0;
                 solicitacao.ValorTotalEstacionamento = valorMinuto * minutosTotais * 0.9;
                 solicitacao.ValorGanho = valorMinuto * minutosTotais * 0.1;
+                cliente.Saldo -= solicitacao.ValorTotal;
+
+                db.Entry<Cliente>(cliente).State = EntityState.Modified;
+                db.SaveChanges();
 
                 var dias = diferenca.Days;
                 var horas = diferenca.Hours;

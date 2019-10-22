@@ -1,8 +1,11 @@
-﻿using FEL_JAMIRA_API.Models.Cadastros;
+﻿using FEL_JAMIRA_API.Models;
+using FEL_JAMIRA_API.Models.Cadastros;
 using FEL_JAMIRA_API.Models.Estacionamentos;
 using FEL_JAMIRA_API.Util;
 using FEL_JAMIRA_WEB_API.Models;
 using System;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -89,6 +92,20 @@ namespace FEL_JAMIRA_API.Controllers
                     await db.SaveChangesAsync();
                 }).Wait();
 
+                ContaDeposito contaDeposito = new ContaDeposito 
+                {
+                    Agencia = cadastroFornecedor.Agencia,
+                    IdBanco = cadastroFornecedor.IdBanco,
+                    IdTipoConta = cadastroFornecedor.IdTipoConta,
+                    Conta = cadastroFornecedor.Conta,
+                    IdEstacionamento = estacionamento.Id
+                };
+
+                db.ContaDepositos.Add(contaDeposito);
+
+                Task.Run(async () => {
+                    await db.SaveChangesAsync();
+                }).Wait();
 
                 ResponseViewModel<Usuario> responseUser = new ResponseViewModel<Usuario>
                 {
@@ -139,6 +156,90 @@ namespace FEL_JAMIRA_API.Controllers
                     Mensagem = "Não foi possivel atender a sua solicitação: " + e.Message
                 };
             }
+        }
+
+        [System.Web.Http.Authorize]
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("~/api/Estacionamentos/GetContaDepositoPorPessoa")]
+        public async Task<ResponseViewModel<ContaDeposito>> GetContaDepositoPorPessoa(int IdPessoa)
+        {
+            try
+            {
+                ContaDeposito entidade =
+                    db.ContaDepositos.Include("Estacionamento").Where(x => x.Estacionamento.IdPessoa.Equals(IdPessoa)).FirstOrDefault();
+
+                return new ResponseViewModel<ContaDeposito>()
+                {
+                    Data = entidade,
+                    Serializado = true,
+                    Sucesso = true,
+                    Mensagem = "Busca realizada com sucesso"
+                };
+            }
+            catch (Exception e)
+            {
+                return new ResponseViewModel<ContaDeposito>()
+                {
+                    Data = null,
+                    Serializado = true,
+                    Sucesso = false,
+                    Mensagem = "Não foi possivel atender a sua solicitação: " + e.Message
+                };
+            }
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("~/api/Estacionamentos/GetBancos")]
+        public async Task<ResponseViewModel<List<Banco>>> GetBancos()
+        {
+            try
+            {
+                var response = new ResponseViewModel<List<Banco>>
+                {
+                    Data = await db.Set<Banco>().AsQueryable().ToListAsync(),
+                    Sucesso = true,
+                    Mensagem = "Dados retornados com sucesso."
+                };
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new ResponseViewModel<List<Banco>>()
+                {
+                    Data = null,
+                    Serializado = true,
+                    Sucesso = false,
+                    Mensagem = "Não foi possivel atender a sua solicitação: " + e.Message
+                };
+            }
+
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("~/api/Estacionamentos/GetTipoContas")]
+        public async Task<ResponseViewModel<List<TipoConta>>> GetTipoContas()
+        {
+            try
+            {
+                var response = new ResponseViewModel<List<TipoConta>>
+                {
+                    Data = await db.Set<TipoConta>().AsQueryable().ToListAsync(),
+                    Sucesso = true,
+                    Mensagem = "Dados retornados com sucesso."
+                };
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new ResponseViewModel<List<TipoConta>>()
+                {
+                    Data = null,
+                    Serializado = true,
+                    Sucesso = false,
+                    Mensagem = "Não foi possivel atender a sua solicitação: " + e.Message
+                };
+            }
+
         }
     }
 }

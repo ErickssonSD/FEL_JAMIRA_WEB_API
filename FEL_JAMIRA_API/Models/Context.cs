@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using FEL_JAMIRA_API.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.ModelConfiguration.Conventions;
@@ -29,6 +30,9 @@ namespace FEL_JAMIRA_WEB_API.Models
             modelBuilder.Entity<Pessoa>().ToTable("PESSOA");
             modelBuilder.Entity<Solicitacao>().ToTable("SOLICITACAO");
             modelBuilder.Entity<Usuario>().ToTable("USUARIO");
+            modelBuilder.Entity<TipoConta>().ToTable("TIPO_CONTA");
+            modelBuilder.Entity<Banco>().ToTable("BANCO");
+            modelBuilder.Entity<ContaDeposito>().ToTable("CONTA_DEPOSITO");
 
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
             modelBuilder.Entity<Estacionamento>().Property(x => x.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
@@ -47,6 +51,9 @@ namespace FEL_JAMIRA_WEB_API.Models
         public DbSet<Pessoa> Pessoas { get; set; }
         public DbSet<Solicitacao> Solicitacoes { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<ContaDeposito> ContaDepositos { get; set; }
+        public DbSet<Banco> Bancos { get; set; }
+        public DbSet<TipoConta> TipoContas { get; set; }
 
     }
 }
