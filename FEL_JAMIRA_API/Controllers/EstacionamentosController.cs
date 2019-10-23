@@ -29,14 +29,21 @@ namespace FEL_JAMIRA_API.Controllers
             try
             {
                 Usuario existente = new Usuario();
+                Pessoa existente1 = new Pessoa();
+
                 Task.Run(async () => {
                     var valor = db.Usuarios.Where(x => x.Login == cadastroFornecedor.Email).FirstOrDefault();
                     existente = valor;
 
+                    var valor2 = db.Pessoas.Where(x => x.CPF == cadastroFornecedor.CPF).FirstOrDefault();
+                    existente1 = valor2;
                 }).Wait();
 
                 if (existente != null)
                     throw new Exception("O Email já existe.");
+
+                if (existente1 != null)
+                    throw new Exception("O CPF já existe.");
 
                 UsuariosController usuariosController = new UsuariosController();
                 EstacionamentosController estacionamentosController = new EstacionamentosController();

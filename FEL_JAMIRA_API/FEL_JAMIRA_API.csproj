@@ -206,6 +206,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Administração\RecebimentoTotalizador.cs" />
+    <Compile Include="Models\Administração\TotalEstacionamentosMensais.cs" />
     <Compile Include="Models\Autenticação\Cadastros\CadastroCliente.cs" />
     <Compile Include="Models\Autenticação\Cadastros\CadastroFornecedor.cs" />
     <Compile Include="Models\Autenticação\Requisição\LoginRequisicao.cs" />

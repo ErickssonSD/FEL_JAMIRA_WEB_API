@@ -1,4 +1,6 @@
-﻿using FEL_JAMIRA_API.Models.Clientes;
+﻿using FEL_JAMIRA_API.Models;
+using FEL_JAMIRA_API.Models.Administração;
+using FEL_JAMIRA_API.Models.Clientes;
 using FEL_JAMIRA_API.Models.Estacionamentos;
 using FEL_JAMIRA_WEB_API.Models;
 using System;
@@ -252,6 +254,147 @@ namespace FEL_JAMIRA_API.Controllers
                     {
                         InsereAlerta = !estacionamento.TemEstacionamento,
                         Nickname = estacionamento.Proprietario.Nome
+                    };
+                    solicitacao.Add(solicitantes);
+                }
+
+                ResponseViewModel<List<Solicitantes>> response = new ResponseViewModel<List<Solicitantes>>
+                {
+                    Data = solicitacao,
+                    Mensagem = "Dados retornados com sucesso!",
+                    Serializado = true,
+                    Sucesso = true
+                };
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new ResponseViewModel<List<Solicitantes>>()
+                {
+                    Data = null,
+                    Serializado = true,
+                    Sucesso = false,
+                    Mensagem = "Não foi possivel atender a sua solicitação: " + e.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// Método para Buscar os as solicitações em aberto dos estacionamentos.
+        /// </summary>
+        /// <param name="entidade"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Authorize]
+        [System.Web.Http.Route("~/api/Solicitacao/GetSolicitacoesParaFinalizarCliente")]
+        public async Task<ResponseViewModel<List<Solicitantes>>> GetSolicitacoesParaFinalizarCliente(string idCliente)
+        {
+            try
+            {
+                int valor = int.Parse(idCliente);
+                List<Solicitantes> solicitacao = new List<Solicitantes>();
+                solicitacao = await db.Solicitacoes.Include("Cliente").Include("Estacionamento").Include("Estacionamento.Proprietario")
+                                            .Where(x => x.IdCliente.Equals(valor) && x.Status.Equals(3))
+                                            .Select(cl => new Solicitantes
+                                            {
+                                                InsereAlerta = !cl.Estacionamento.TemEstacionamento,
+                                                Nickname = cl.Estacionamento.Proprietario.Nome,
+                                                NomeCliente = cl.Cliente.Nome,
+                                                IdCliente = cl.IdCliente,
+                                                IdSolicitacao = cl.Id,
+                                                Status = cl.Status,
+                                                PeriodoDe = null,
+                                                PeriodoAte = null
+                                            }).ToListAsync();
+
+                if (solicitacao.Count > 0)
+                {
+                    foreach (var item in solicitacao)
+                    {
+                        Carro carro = CarroCliente(item.IdCliente);
+                        item.Carro = carro.Modelo;
+                        item.PlacaCarro = carro.Placa;
+
+                    }
+                }
+
+                if (solicitacao.Count == 0)
+                {
+                    Cliente cliente = db.Clientes.FirstOrDefault(x => x.Id == valor);
+                    Solicitantes solicitantes = new Solicitantes
+                    {
+                        InsereAlerta = !cliente.TemCarro,
+                        Nickname = cliente.Nome
+                    };
+                    solicitacao.Add(solicitantes);
+                }
+
+                ResponseViewModel<List<Solicitantes>> response = new ResponseViewModel<List<Solicitantes>>
+                {
+                    Data = solicitacao,
+                    Mensagem = "Dados retornados com sucesso!",
+                    Serializado = true,
+                    Sucesso = true
+                };
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new ResponseViewModel<List<Solicitantes>>()
+                {
+                    Data = null,
+                    Serializado = true,
+                    Sucesso = false,
+                    Mensagem = "Não foi possivel atender a sua solicitação: " + e.Message
+                };
+            }
+        }
+
+        /// <summary>
+        /// Método para Buscar os as solicitações em aberto dos estacionamentos.
+        /// </summary>
+        /// <param name="entidade"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Authorize]
+        [System.Web.Http.Route("~/api/Solicitacao/GetSolicitacoesEmAbertoCliente")]
+        public async Task<ResponseViewModel<List<Solicitantes>>> GetSolicitacoesEmAbertoCliente(string idCliente)
+        {
+            try
+            {
+                int valor = int.Parse(idCliente);
+                List<Solicitantes> solicitacao = new List<Solicitantes>();
+                solicitacao = await db.Solicitacoes.Include("Cliente").Include("Estacionamento").Include("Estacionamento.Proprietario")
+                                            .Where(x => x.IdCliente.Equals(valor) && x.Status.Equals(2))
+                                            .Select(cl => new Solicitantes
+                                            {
+                                                InsereAlerta = !cl.Estacionamento.TemEstacionamento,
+                                                Nickname = cl.Estacionamento.Proprietario.Nome,
+                                                NomeCliente = cl.Cliente.Nome,
+                                                IdCliente = cl.IdCliente,
+                                                IdSolicitacao = cl.Id,
+                                                Status = cl.Status,
+                                                PeriodoDe = null,
+                                                PeriodoAte = null
+                                            }).ToListAsync();
+
+                foreach (var item in solicitacao)
+                {
+                    Carro carro = CarroCliente(item.IdCliente);
+                    item.Carro = carro.Modelo;
+                    item.PlacaCarro = carro.Placa;
+
+                }
+
+                if (solicitacao.Count == 0)
+                {
+                    Cliente cliente = db.Clientes.FirstOrDefault(x => x.Id == valor);
+                    Solicitantes solicitantes = new Solicitantes
+                    {
+                        InsereAlerta = !cliente.TemCarro,
+                        Nickname = cliente.Nome
                     };
                     solicitacao.Add(solicitantes);
                 }
@@ -582,7 +725,105 @@ namespace FEL_JAMIRA_API.Controllers
             }
         }
 
-        
+        /// <summary>
+        /// Método para Buscar os Clientes do Estacionamento.
+        /// </summary>
+        /// <param name="entidade"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Authorize]
+        [System.Web.Http.Route("~/api/Solicitacao/StatusSolicitacao")]
+        public async Task<ResponseViewModel<List<Solicitantes>>> StatusSolicitacao(int idCliente)
+        {
+            try
+            {
+
+                List<Solicitantes> solicitacao = new List<Solicitantes>();
+                solicitacao = await db.Solicitacoes.Include("Cliente").Include("Estacionamento").Include("Estacionamento.Proprietario")
+                                            .Where(x => x.IdCliente.Equals(idCliente) && (x.Status == 0 || x.Status == 2 || x.Status == 3))
+                                            .Select(cl => new Solicitantes
+                                            {
+                                                IdEstacionamento = cl.IdEstacionamento,
+                                                InsereAlerta = !cl.Estacionamento.TemEstacionamento,
+                                                Nickname = cl.Estacionamento.Proprietario.Nome,
+                                                NomeCliente = cl.Cliente.Nome,
+                                                IdCliente = cl.IdCliente,
+                                                IdSolicitacao = cl.Id,
+                                                Status = cl.Status,
+                                                PeriodoDe = cl.DataEntrada,
+                                                PeriodoAte = null
+                                            }).ToListAsync();
+
+                ResponseViewModel<List<Solicitantes>> response = new ResponseViewModel<List<Solicitantes>>
+                {
+                    Data = solicitacao,
+                    Mensagem = "Dados retornados com sucesso!",
+                    Serializado = true,
+                    Sucesso = true
+                };
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new ResponseViewModel<List<Solicitantes>>()
+                {
+                    Data = null,
+                    Serializado = true,
+                    Sucesso = false,
+                    Mensagem = "Não foi possivel atender a sua solicitação: " + e.Message
+                };
+            }
+        }
+
+
+        /// <summary>
+        /// Método para Buscar os Clientes do Estacionamento.
+        /// </summary>
+        /// <param name="entidade"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Authorize]
+        [System.Web.Http.Route("~/api/Solicitacao/RequisitarFinalizacao")]
+        public async Task<ResponseViewModel<Solicitantes>> RequisitarFinalizacao(int IdSolicitacao)
+        {
+            try
+            {
+                Solicitacao solicitacao = db.Solicitacoes.Include("Estacionamento").Include("Estacionamento.Proprietario").FirstOrDefault(x => x.Id == IdSolicitacao);
+
+                solicitacao.Status = 3;
+
+                db.Entry<Solicitacao>(solicitacao).State = EntityState.Modified;
+                db.SaveChanges();
+
+                Solicitantes solicitantes = new Solicitantes
+                {
+                    Nickname = solicitacao.Estacionamento.Proprietario.Nome,
+                    InsereAlerta = !solicitacao.Estacionamento.TemEstacionamento
+                };
+
+                ResponseViewModel<Solicitantes> response = new ResponseViewModel<Solicitantes>
+                {
+                    Data = solicitantes,
+                    Mensagem = "Dados retornados com sucesso!",
+                    Serializado = true,
+                    Sucesso = true
+                };
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new ResponseViewModel<Solicitantes>()
+                {
+                    Data = null,
+                    Serializado = true,
+                    Sucesso = false,
+                    Mensagem = "Não foi possivel atender a sua solicitação: " + e.Message
+                };
+            }
+        }
+
         /// <summary>
         /// Método para cadastrar solicitação do fornecedor.
         /// </summary>
@@ -595,6 +836,17 @@ namespace FEL_JAMIRA_API.Controllers
         {
             try
             {
+                Cliente cliente = db.Clientes.Find(solicitacao.IdCliente);
+                bool saldoNegativo = cliente.Saldo < 0 ? true : false;
+                if(saldoNegativo)
+                    return new ResponseViewModel<Solicitacao>
+                        {
+                            Data = solicitacao,
+                            Mensagem = "O Cliente está com saldo negativo!",
+                            Serializado = true,
+                            Sucesso = false
+                        };
+
                 if (solicitacao.Status == 2)
                 {
                     List<Solicitacao> solicitacaos = db.Solicitacoes.Where(x => x.IdCliente == solicitacao.IdCliente && x.Status != 1 && x.Status != 4).ToList();
@@ -654,7 +906,79 @@ namespace FEL_JAMIRA_API.Controllers
                 };
             }
         }
-        
+
+        /// <summary>
+        /// Método para Buscar os Clientes do Estacionamento.
+        /// </summary>
+        /// <param name="entidade"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Authorize]
+        [System.Web.Http.Route("~/api/Solicitacao/GetValoresMensais")]
+        public async Task<ResponseViewModel<List<TotalEstacionamentosMensais>>> GetValoresMensais(int mes, int ano)
+        {
+            try
+            {
+                if (mes > 0 && ano > 0)
+                {
+                    List<TotalEstacionamentosMensais> totalEstacionamentos = new List<TotalEstacionamentosMensais>();
+                    DateTime primeiroDiaDoMes = new DateTime(ano, mes, 1);
+                    DateTime ultimoDiaDoMes = new DateTime(ano, mes, DateTime.DaysInMonth(ano, mes));
+                    List<RecebimentoTotalizador> totais = db.Solicitacoes.Include("Estacionamento").
+                        Where(x => x.Status.Equals(1) && x.DataSaida >= primeiroDiaDoMes && x.DataSaida <= ultimoDiaDoMes)
+                        .GroupBy(l => l.IdEstacionamento)
+                        .Select(cl => new RecebimentoTotalizador
+                        {
+                            IdEstacionamento = cl.Key,
+                            ValorAPagar = cl.Sum(c => c.ValorTotalEstacionamento)                           
+                        }).ToList();
+
+                    foreach (var item in totais)
+                    {
+                        ContaDeposito conta = db.ContaDepositos.Include("Banco").Include("TipoConta").FirstOrDefault(x => x.IdEstacionamento == item.IdEstacionamento);
+                        TotalEstacionamentosMensais total = new TotalEstacionamentosMensais();
+                        total.IdEstacionamento = item.IdEstacionamento;
+                        total.ValorAPagar = item.ValorAPagar;
+                        total.NomeEstacionamento = (db.Estacionamentos.Find(item.IdEstacionamento)).NomeEstacionamento;
+                        total.TipoConta = conta != null ? conta.TipoConta.Nome : "";
+                        total.ContaParaPagar = conta != null ? conta.Conta : "";
+                        total.AgenciaParaPagar = conta != null ? conta.Agencia: "";
+                        total.Banco = conta != null ? conta.Banco.Nome : "";
+                        totalEstacionamentos.Add(total);
+                    }
+
+                    return new ResponseViewModel<List<TotalEstacionamentosMensais>>
+                    {
+                        Data = totalEstacionamentos,
+                        Mensagem = "Dados retornados com sucesso!",
+                        Serializado = true,
+                        Sucesso = true
+                    };
+                }
+                else 
+                {
+                    return new ResponseViewModel<List<TotalEstacionamentosMensais>>
+                    {
+                        Data = null,
+                        Mensagem = "Ano e Mês devem ser preenchidos e maiores que 0!",
+                        Serializado = true,
+                        Sucesso = false
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+
+                return new ResponseViewModel<List<TotalEstacionamentosMensais>>
+                {
+                    Data = null,
+                    Mensagem = "Ocorreu um erro ao processar sua solicitação!" + e.Message,
+                    Serializado = true,
+                    Sucesso = false
+                };
+            }
+        }
+
         public Carro CarroCliente(int idCliente)
         {
             Carro carro = db.Carros.FirstOrDefault(x => x.IdCliente == idCliente);

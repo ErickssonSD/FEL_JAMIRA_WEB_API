@@ -11,6 +11,7 @@ namespace FEL_JAMIRA_API.Models.Estacionamentos
         public string Nickname{ get; set; }
         public bool InsereAlerta{ get; set; }
         public int IdSolicitacao { get; set; }
+        public int IdEstacionamento { get; set; }
         public int IdCliente { get; set; }
         public string NomeCliente { get; set; }
         public string PlacaCarro { get; set; }
